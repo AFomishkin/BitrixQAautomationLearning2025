@@ -1,4 +1,5 @@
-﻿using atFrameWork2.BaseFramework.LogTools;
+﻿using AquaTestFramework.CommonFramework.BitrixCPinteraction;
+using atFrameWork2.BaseFramework.LogTools;
 using atFrameWork2.PageObjects;
 using atFrameWork2.SeleniumFramework;
 using atFrameWork2.TestEntities;
@@ -37,6 +38,7 @@ namespace atFrameWork2.BaseFramework
 
         public void Execute(PortalInfo testPortal, Action uiRefresher)
         {
+            TestPortal = testPortal;
             Status = TestCaseStatus.running;
             uiRefresher.Invoke();
             RunningTestCase = this;
@@ -48,19 +50,19 @@ namespace atFrameWork2.BaseFramework
             try
             {
                 Log.Info($"---------------Запуск кейса '{Title}'---------------");
-                if (testPortal.PortalUri.Scheme == Uri.UriSchemeHttps)//не особо надёжная история, но для обучалки сойдет
+                if (TestPortal.PortalUri.Scheme == Uri.UriSchemeHttps)//не особо надёжная история, но для обучалки сойдет
                     IsCloud = true;
 
                 if (EnvType == TestCaseEnvType.Web)
                 {
-                    var portalLoginPage = new PortalLoginPage(testPortal);
-                    var homePage = portalLoginPage.Login(testPortal.PortalAdmin);
+                    var portalLoginPage = new PortalLoginPage(TestPortal);
+                    var homePage = portalLoginPage.Login(TestPortal.PortalAdmin);
                     Body.Invoke(homePage);
                 }
                 else
                 {
-                    var loginPage = new MobileLoginPage(testPortal);
-                    var homePage = loginPage.Login(testPortal.PortalAdmin);
+                    var loginPage = new MobileLoginPage(TestPortal);
+                    var homePage = loginPage.Login(TestPortal.PortalAdmin);
                     MobileBody.Invoke(homePage);
                 }
 
@@ -91,6 +93,19 @@ namespace atFrameWork2.BaseFramework
             uiRefresher.Invoke();
         }
 
+        /// <summary>
+        /// Выполняет php код в админке портала текущего кейса через "Настройки -> Командная PHP строка"
+        /// </summary>
+        /// <param name="phpCode"></param>
+        /// <returns>Результат выполнения кода (если код в принципе что-то выводит)</returns>
+        public string ExecutePHP(string phpCode)
+        {
+            if (IsCloud)
+                throw new Exception("Выполнение php на облаке невозможно");
+            var phpExecutor = new PHPcommandLineExecutor(TestPortal.PortalUri, TestPortal.PortalAdmin.Login, TestPortal.PortalAdmin.Password);
+            return phpExecutor.Execute(phpCode);
+        }
+
         public string Title { get; set; }
         Action<PortalHomePage> Body { get; set; }
         Action<MobileHomePage> MobileBody { get; set; }
@@ -100,6 +115,7 @@ namespace atFrameWork2.BaseFramework
         public TestCaseStatus Status { get; set; }
         public TestCaseEnvType EnvType { get; set; }
         public bool IsCloud { get; set; }
+        PortalInfo TestPortal { get; set; }
     }
 
     public enum TestCaseEnvType
