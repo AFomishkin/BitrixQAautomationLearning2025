@@ -48,6 +48,9 @@ namespace atFrameWork2.BaseFramework
             try
             {
                 Log.Info($"---------------Запуск кейса '{Title}'---------------");
+                if (testPortal.PortalUri.Scheme == Uri.UriSchemeHttps)//не особо надёжная история, но для обучалки сойдет
+                    IsCloud = true;
+
                 if (EnvType == TestCaseEnvType.Web)
                 {
                     var portalLoginPage = new PortalLoginPage(testPortal);
@@ -96,6 +99,7 @@ namespace atFrameWork2.BaseFramework
         public List<LogMessage> CaseLog { get; } = new List<LogMessage>();
         public TestCaseStatus Status { get; set; }
         public TestCaseEnvType EnvType { get; set; }
+        public bool IsCloud { get; set; }
     }
 
     public enum TestCaseEnvType
