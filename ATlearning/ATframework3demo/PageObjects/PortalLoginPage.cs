@@ -21,7 +21,7 @@ namespace atFrameWork2.PageObjects
             WebDriverActions.OpenUri(portalInfo.PortalUri);
             var loginField = new WebItem("//input[@id='login' or @name='USER_LOGIN']", "Поле для ввода логина");
             var pwdField = new WebItem("//input[@id='password' or @name='USER_PASSWORD']", "Поле для ввода пароля");
-            loginField.SendKeys(admin.Login);
+            loginField.SendKeys(admin.LoginAkaEmail);
             if(!pwdField.WaitElementDisplayed(1))
                 loginField.SendKeys(Keys.Enter);
             pwdField.SendKeys(admin.Password, logInputtedText: false);

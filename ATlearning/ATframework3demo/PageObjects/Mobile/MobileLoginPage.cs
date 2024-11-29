@@ -30,7 +30,7 @@ namespace ATframework3demo.PageObjects.Mobile
             nextBtn.Click();
 
             // вводим логин и дальше
-            loginField.SendKeys(admin.Login);
+            loginField.SendKeys(admin.LoginAkaEmail);
             nextBtn.Click();
 
             // вводим пароль и дальше

@@ -102,7 +102,7 @@ namespace atFrameWork2.BaseFramework
         {
             if (IsCloud)
                 throw new Exception("Выполнение php на облаке невозможно");
-            var phpExecutor = new PHPcommandLineExecutor(TestPortal.PortalUri, TestPortal.PortalAdmin.Login, TestPortal.PortalAdmin.Password);
+            var phpExecutor = new PHPcommandLineExecutor(TestPortal.PortalUri, TestPortal.PortalAdmin.LoginAkaEmail, TestPortal.PortalAdmin.Password);
             return phpExecutor.Execute(phpCode);
         }
 

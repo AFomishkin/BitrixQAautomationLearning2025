@@ -45,17 +45,17 @@ namespace ATframework3demo.Pages.TestRunPage
 
             if (string.IsNullOrEmpty(PortalUri) || !Uri.TryCreate(PortalUri, UriKind.Absolute, out portalUri))
                 PortalUriBgColor = HelperMethods.GetHexColor(Color.Red);
-            else if (string.IsNullOrEmpty(PortalUser.Login) || !IsEmail(PortalUser.Login))
+            else if (string.IsNullOrEmpty(PortalUser.LoginAkaEmail) || !IsEmail(PortalUser.LoginAkaEmail))
             {
                 LoginBgColor = HelperMethods.GetHexColor(Color.Red);
-                if (!IsEmail(PortalUser.Login))
+                if (!IsEmail(PortalUser.LoginAkaEmail))
                     DisplayedError = "Логин должен быть email-ом";
             }
             else if (string.IsNullOrEmpty(PortalUser.Password))
                 PwdBgColor = HelperMethods.GetHexColor(Color.Red);
             else
             {
-                File.WriteAllText(configFileName, $"{PortalUri}\r\n{PortalUser.Login}\r\n{PortalUser.Password}");
+                File.WriteAllText(configFileName, $"{PortalUri}\r\n{PortalUser.LoginAkaEmail}\r\n{PortalUser.Password}");
                 var selectedCases = CaseCollection.FindAll(x => x.Node.IsChecked);
 
                 if (selectedCases.Any())
@@ -101,7 +101,7 @@ namespace ATframework3demo.Pages.TestRunPage
                     if(parts.Count() > 2)
                     {
                         PortalUri = parts[0];
-                        PortalUser.Login = parts[1];
+                        PortalUser.LoginAkaEmail = parts[1];
                         PortalUser.Password = parts[2];
                     }
                 }
