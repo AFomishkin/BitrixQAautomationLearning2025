@@ -18,6 +18,7 @@ namespace ATframework3demo.Pages.TestRunPage
         protected string PortalUri { get; set; }
         protected string PortalUriBgColor { get; set; }
         protected string LoginBgColor { get; set; }
+        protected string DisplayedError { get; set; }
         protected string PwdBgColor { get; set; }
         protected User PortalUser { get; set; } = new User();
         [CascadingParameter] public IModalService Modal { get; set; }
@@ -34,23 +35,29 @@ namespace ATframework3demo.Pages.TestRunPage
             PortalUriBgColor = HelperMethods.GetHexColor(Color.White);
             LoginBgColor = HelperMethods.GetHexColor(Color.White);
             PwdBgColor = HelperMethods.GetHexColor(Color.White);
+            DisplayedError = null;
         }
 
         protected async void RunSelectedTests()
         {
             RunButtonDisabled = true;
             Uri portalUri = default;
+
             if (string.IsNullOrEmpty(PortalUri) || !Uri.TryCreate(PortalUri, UriKind.Absolute, out portalUri))
                 PortalUriBgColor = HelperMethods.GetHexColor(Color.Red);
-            else if (string.IsNullOrEmpty(PortalUser.Login))
+            else if (string.IsNullOrEmpty(PortalUser.Login) || !IsEmail(PortalUser.Login))
+            {
                 LoginBgColor = HelperMethods.GetHexColor(Color.Red);
+                if (!IsEmail(PortalUser.Login))
+                    DisplayedError = "Логин должен быть email-ом";
+            }
             else if (string.IsNullOrEmpty(PortalUser.Password))
                 PwdBgColor = HelperMethods.GetHexColor(Color.Red);
             else
             {
                 File.WriteAllText(configFileName, $"{PortalUri}\r\n{PortalUser.Login}\r\n{PortalUser.Password}");
                 var selectedCases = CaseCollection.FindAll(x => x.Node.IsChecked);
-                
+
                 if (selectedCases.Any())
                 {
                     selectedCases.ForEach(x => x.Status = TestCaseStatus.waitingForExecute);
@@ -67,9 +74,14 @@ namespace ATframework3demo.Pages.TestRunPage
                     return;
                 }
             }
-         
+
             RunButtonDisabled = false;
             StateHasChanged();
+        }
+
+        private bool IsEmail(string email)
+        {
+            return email?.Contains("@") == true && email?.Contains(".") == true;
         }
 
         protected override async Task OnInitializedAsync()
