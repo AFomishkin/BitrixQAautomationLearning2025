@@ -7,6 +7,14 @@ namespace atFrameWork2.PageObjects
 {
     public class PortalHomePage
     {
-        public PortalLeftMenu LeftMenu => new PortalLeftMenu();
+        public IWebDriver Driver { get; }
+
+        public PortalHomePage(IWebDriver driver = default)
+        {
+            Driver = driver;
+        }
+
+        public PortalLeftMenu LeftMenu => new PortalLeftMenu(Driver);
+
     }
 }
