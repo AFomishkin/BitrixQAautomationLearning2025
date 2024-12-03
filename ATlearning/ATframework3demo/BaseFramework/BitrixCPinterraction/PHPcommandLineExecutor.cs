@@ -51,13 +51,16 @@ namespace AquaTestFramework.CommonFramework.BitrixCPinteraction
             string responseBody = response.Content.ReadAsStringAsync().Result;
             if (response.StatusCode != HttpStatusCode.OK || responseBody?.Contains("Время выполнения:") != true)
                 throw new Exception("php-код не выполнен, ответ сервера:\r\n" + responseBody);
-            string phpCodeResult = default;
 
+            string phpCodeResult = default;
             if (responseBody != null)
             {
                 phpCodeResult = HttpUtility.HtmlDecode(responseBody);
                 if (phpCodeResult.Contains("<pre>"))
+                {
                     phpCodeResult = HtmlTools.GetItemInnerTextFromHtml(new List<string> { "//pre" }, responseBody, true);
+                    phpCodeResult = HttpUtility.HtmlDecode(phpCodeResult);
+                }
             }
 
             return phpCodeResult;
