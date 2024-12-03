@@ -4,6 +4,7 @@ using atFrameWork2.PageObjects;
 using atFrameWork2.SeleniumFramework;
 using atFrameWork2.TestEntities;
 using ATframework3demo.BaseFramework;
+using ATframework3demo.BaseFramework.BitrixCPinterraction;
 using ATframework3demo.PageObjects.Mobile;
 
 namespace atFrameWork2.BaseFramework
@@ -106,6 +107,23 @@ namespace atFrameWork2.BaseFramework
             return phpExecutor.Execute(phpCode);
         }
 
+        /// <summary>
+        /// Генерирует нового сотрудника на портале
+        /// </summary>
+        /// <param name="extranetUser">Если задано, то создаст пользователя эксранета</param>
+        /// <returns></returns>
+        public User CreatePortalTestUser(bool extranetUser)
+        {
+            if (IsCloud)
+                throw new Exception("Генерация юзеров на облаке невозможна");
+            var user = EmployeeTools.GenerateBxPortalValidUserData();
+            if(extranetUser)
+                EmployeeTools.AddNewExtranetUser(user, TestPortal.PortalAdmin, TestPortal.PortalUri);
+            else
+                EmployeeTools.AddNewIntranetUser(user, TestPortal.PortalAdmin, TestPortal.PortalUri);
+            return user;
+        }
+
         public string Title { get; set; }
         Action<PortalHomePage> Body { get; set; }
         Action<MobileHomePage> MobileBody { get; set; }
@@ -115,7 +133,7 @@ namespace atFrameWork2.BaseFramework
         public TestCaseStatus Status { get; set; }
         public TestCaseEnvType EnvType { get; set; }
         public bool IsCloud { get; set; }
-        PortalInfo TestPortal { get; set; }
+        public PortalInfo TestPortal { get; set; }
     }
 
     public enum TestCaseEnvType
