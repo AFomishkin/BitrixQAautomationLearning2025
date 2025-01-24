@@ -29,9 +29,17 @@ namespace atFrameWork2.PageObjects
 
             if (menuItem.WaitElementDisplayed(driver: Driver) == false)
             {
-                //развернуть меню
-                var btnMore = new WebItem("//span[@id='menu-more-btn-text']", "Кнопка Ещё левого меню");
-                btnMore.Click(Driver);
+                var teamWorkGroupEtc = new WebItem("//li[@data-type='system_group' and not(@id='bx_left_menu_menu_marketplace_group')]", 
+                    "Кнопка группы пунктов меню главного инструмента");
+                if(teamWorkGroupEtc.WaitElementDisplayed(2, driver: Driver) && teamWorkGroupEtc.GetAttribute("data-collapse-mode") == "collapsed")
+                    teamWorkGroupEtc.Click(Driver);
+
+                if (menuItem.WaitElementDisplayed(driver: Driver) == false)
+                {
+                    //развернуть меню Ещё
+                    var btnMore = new WebItem("//span[@id='menu-more-btn-text']", "Кнопка Ещё левого меню");
+                    btnMore.Click(Driver);
+                }
             }
             //клик в пункт меню
             menuItem.Click(Driver);
