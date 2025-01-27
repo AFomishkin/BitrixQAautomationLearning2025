@@ -1,4 +1,5 @@
 ﻿using atFrameWork2.BaseFramework;
+using atFrameWork2.BaseFramework.LogTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -113,20 +114,23 @@ namespace atFrameWork2.SeleniumFramework
         /// Проверяет наличие заданной подстроки в тексте элемента
         /// </summary>
         /// <param name="expectedText"></param>
-        /// <param name="failMessage"></param>
+        /// <param name="failMessage">Если задано, то выведет ошибку в случае отсутствия искомой подстроки в тексте элемента</param>
         /// <param name="driver"></param>
         /// <returns>true if expectedText present at element's innerText</returns>
-        public bool AssertTextContains(string expectedText, string failMessage, IWebDriver driver = default)
+        public bool AssertTextContains(string expectedText, string failMessage = default, IWebDriver driver = default)
         {
             PrintActionInfo(nameof(AssertTextContains));
             bool result = false;
-
+            string factText = default;
+            
             Execute((targetElement, drv) =>
             {
-                string factText = targetElement.Text;
+                factText = targetElement.Text;
                 result = !string.IsNullOrEmpty(factText) && factText.Contains(expectedText);
             }, driver);
 
+            if(!result && failMessage != default)
+                Log.Error(failMessage + $"\r\nОжидалось вхождение подстроки '{expectedText}'\r\nФактический текст: '{factText}'");
             return result;
         }
 
