@@ -1,4 +1,6 @@
 ﻿using atFrameWork2.BaseFramework.LogTools;
+using atFrameWork2.PageObjects;
+using atFrameWork2.TestEntities;
 using ATframework3demo.SeleniumFramework.DriverActions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -18,6 +20,20 @@ namespace atFrameWork2.SeleniumFramework
             driver.Manage().Window.Maximize();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             return driver;
+        }
+
+        /// <summary>
+        /// Закрывает текущий драйвер по умолчанию, создаёт новый драйвер по умолчанию и логинит на нём заданного юзера на заданный портал
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="portal"></param>
+        /// <returns></returns>
+        public static PortalHomePage ReloginWithNewDefaultDriver(User user, PortalInfo portal)
+        {
+            WebItem.DefaultDriver.Quit();
+            WebItem.DefaultDriver = default;
+            return new PortalLoginPage(portal)
+                .Login(user);
         }
 
         /// <summary>
